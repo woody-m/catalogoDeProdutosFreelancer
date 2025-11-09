@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo de Freelancers</title>
+<style>
+  body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; color: #222; padding: 40px 20px 60px 20px; }
+  h1 { font-weight: 700; font-size: 18px; text-align: center; margin-bottom: 30px; }
+  .welcome-box { background-color: #fff; border: 1px solid #ddd; max-width: 700px; margin: 0 auto 45px auto; padding: 20px 30px; text-align: center; }
+  .welcome-box strong { display: block; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
+  .welcome-box p { font-weight: 300; font-size: 12px; color: #666; line-height: 18px; margin: 0 auto; max-width: 520px; }
+  .actions { max-width: 700px; margin: 0 auto 50px auto; display: flex; justify-content: center; gap: 24px; }
+  .btn { cursor: pointer; border: 1.8px solid #222; background-color: #fff; color: #222; font-weight: 700; font-size: 12px; padding: 15px 35px; display: flex; align-items: center; gap: 7px; user-select: none; transition: background-color 0.3s ease, color 0.3s ease; text-decoration: none; }
+  .btn:hover, .btn:focus { background-color: #222; color: #fff; outline: none; }
+  .btn.register::before { content: "+"; font-weight: 700; }
+  .btn.view::before { content: "→"; font-weight: 700; }
+  footer { max-width: 700px; margin: 60px auto 0 auto; padding: 10px 20px; background-color: #fff; border: 1px solid #ddd; font-weight: 300; font-size: 10px; text-align: center; color: #999; }
+</style>
+</head>
+<body>
+
+<h1>Catálogo de Freelancers</h1>
+
+<section class="welcome-box">
+  <strong>Bem-vindo ao Sistema</strong>
+  <p>Gerencie e explore um catálogo completo de freelancers qualificados. Cadastre novos profissionais ou visualize a lista completa de freelancers disponíveis para seus projetos.</p>
+</section>
+
+<nav class="actions">
+  <button class="btn register">+ Cadastrar Freelancer</button>
+  <button class="btn view">→ Ver Lista de Freelancers</button>
+</nav>
+
+<footer>Sistema de Catálogo de Freelancers v1.0 | Design em Wireframe</footer>
+
+<script>
+document.querySelector('.btn.register').addEventListener('click', function() {
+    window.location.href = "/cadastrar";
+});
+
+document.querySelector('.btn.view').addEventListener('click', function() {
+    window.location.href = "/lista";
+});
+</script>
+
+</body>
+</html>
+
+

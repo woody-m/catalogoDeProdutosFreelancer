@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lista de Freelancers</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 30px 40px; color: #333; }
+  h2 { font-weight: 700; font-size: 16px; margin-bottom: 10px; }
+  hr { border: none; border-top: 1px solid #ccc; margin-bottom: 20px; }
+  input[type="search"] { width: 260px; padding: 8px 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; outline-offset: -2px; transition: outline-color 0.3s ease; }
+  input[type="search"]:focus { outline: 2px solid #007bff; }
+  table { width: 100%; border-collapse: collapse; background-color: #fff; border-radius: 5px; overflow: hidden; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
+  thead tr { background-color: #e0e0e0; }
+  th, td { padding: 14px 18px; text-align: left; font-size: 14px; }
+  th { font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.03em; }
+  tbody tr { border-bottom: 1px solid #eee; }
+  tbody tr:last-child { border-bottom: none; }
+  strong { font-weight: 700; }
+  button.action-btn { background: transparent; border: 1px solid #aaa; color: #555; text-transform: uppercase; font-size: 11px; font-weight: 700; padding: 6px 14px; margin-left: 8px; border-radius: 3px; cursor: pointer; transition: background-color 0.25s, color 0.25s; }
+  button.action-btn:first-child { margin-left: 0; }
+  button.action-btn:hover { background-color: #007bff; color: white; border-color: #007bff; }
+  tfoot td { background: #f5f5f5; font-size: 12px; color: #888; padding-top: 12px; border-top: 1px solid #ccc; font-weight: 500; }
+  tfoot td:last-child { text-align: right; font-weight: 700; }
+  .nav-back { margin-top: 20px; }
+  .nav-back button { cursor: pointer; padding: 8px 16px; border-radius: 4px; border: 1px solid #222; background-color: #fff; font-weight: 700; }
+  .nav-back button:hover { background-color: #222; color: #fff; }
+</style>
+</head>
+<body>
+
+<h2>Lista de Freelancers</h2>
+<hr />
+<input type="search" id="buscaInput" placeholder="Buscar por nome, serviço ou preço..." />
+
+<table id="freelancerTable">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Serviço</th>
+      <th>Preço</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4" id="totalRegistros">Mostrando 0 de 0 registros</td>
+    </tr>
+  </tfoot>
+</table>
+
+<div class="nav-back">
+  <button onclick="window.location.href='/'">← Voltar ao Início</button>
+  <button onclick="window.location.href='/cadastrar'">+ Cadastrar Novo Freelancer</button>
+</div>
+
+<script>
+const API_URL = "http://127.0.0.1:5000/produtos/";
+
+let freelancers = [];
+
+// Buscar dados do back-end
+async function listarProdutos() {
+    const res = await fetch(API_URL);
+    freelancers = await res.json();
+    renderTabela(freelancers);
+}
+
+function renderTabela(data) {
+    const tabela = document.querySelector("#freelancerTable tbody");
+    const totalRegistrosEl = document.getElementById("totalRegistros");
+    tabela.innerHTML = "";
+    if (!data.length) {
+        tabela.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color:#999;">Nenhum freelancer encontrado.</td></tr>`;
+        totalRegistrosEl.textContent = `Mostrando 0 de 0 registros`;
+        return;
+    }
+    data.forEach(f => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><strong>${f.nome}</strong></td>
+            <td>${f.descricao}</td>
+            <td>${f.preco}</td>
+            <td>
+                <button class="action-btn editar-btn" data-id="${f.id}">Editar</button>
+                <button class="action-btn excluir-btn" data-id="${f.id}">Excluir</button>
+            </td>`;
+        tabela.appendChild(tr);
+    });
+    totalRegistrosEl.textContent = `Mostrando ${data.length} de ${freelancers.length} registros`;
+}
+
+// Filtro de busca
+function filtrarFreelancers(filtro) {
+    filtro = filtro.toLowerCase().trim();
+    if (!filtro) return freelancers;
+    return freelancers.filter(f =>
+        f.nome.toLowerCase().includes(filtro) ||
+        f.descricao.toLowerCase().includes(filtro) ||
+        f.preco.toString().toLowerCase().includes(filtro)
+    );
+}
+
+// Eventos
+document.getElementById("buscaInput").addEventListener("input", (e) => {
+    renderTabela(filtrarFreelancers(e.target.value));
+});
+
+document.querySelector("#freelancerTable tbody").addEventListener("click", async (e) => {
+    const alvo = e.target;
+    if (alvo.classList.contains("editar-btn")) {
+        const id = alvo.dataset.id;
+        window.location.href = `/editar/${id}`;
+    }
+    if (alvo.classList.contains("excluir-btn")) {
+        const id = alvo.dataset.id;
+        if(confirm("Deseja realmente excluir este freelancer?")) {
+            await fetch(API_URL + id, { method: "DELETE" });
+            listarProdutos();
+        }
+    }
+});
+
+// Inicializa
+window.onload = listarProdutos;
+</script>
+
+</body>
+</html>
